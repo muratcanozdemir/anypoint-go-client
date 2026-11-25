@@ -1,0 +1,2177 @@
+{
+ "source": "npm packages of the anypoint-cli-v4 plugins: command IDs, arguments and flag names (shared auth/output flags omitted)",
+ "plugins": {
+  "anypoint-cli-account-plugin": {
+   "version": "1.0.9",
+   "commands": {
+    "account:business-group:describe": {
+     "args": [
+      "[IDENTIFIER]"
+     ],
+     "flags": []
+    },
+    "account:business-group:list": {
+     "args": [],
+     "flags": []
+    },
+    "account:environment:create": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "type"
+     ]
+    },
+    "account:environment:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "account:environment:describe": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "account:environment:list": {
+     "args": [],
+     "flags": []
+    },
+    "account:user:describe": {
+     "args": [],
+     "flags": []
+    }
+   }
+  },
+  "anypoint-cli-api-manager-plugin": {
+   "version": "1.4.5",
+   "commands": {
+    "api-mgr:alert:add": {
+     "args": [
+      "APIINSTANCEID",
+      "NAME"
+     ],
+     "flags": [
+      "email",
+      "message",
+      "operator",
+      "periods",
+      "policyId",
+      "recipient",
+      "responseCode",
+      "responseTime",
+      "severity",
+      "subject",
+      "threshold",
+      "type"
+     ]
+    },
+    "api-mgr:alert:add-legacy": {
+     "args": [
+      "APIINSTANCEID",
+      "NAME"
+     ],
+     "flags": [
+      "duration",
+      "durationUnit",
+      "email",
+      "enabled",
+      "operator",
+      "periods",
+      "policyId",
+      "recipient",
+      "responseCode",
+      "responseTime",
+      "severity",
+      "threshold",
+      "type"
+     ]
+    },
+    "api-mgr:alert:list": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "api-mgr:alert:list-legacy": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "api-mgr:api:autodiscovery": {
+     "args": [
+      "APIINSTANCEID",
+      "GATEWAYVERSION"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:change-specification": {
+     "args": [
+      "APIINSTANCEID",
+      "ASSETVERSION"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:classify": {
+     "args": [
+      "DESTENVNAME",
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:delete": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:deploy": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "applicationName",
+      "environmentName",
+      "gatewayVersion",
+      "javaVersion",
+      "overwrite",
+      "releaseChannel",
+      "target"
+     ]
+    },
+    "api-mgr:api:deprecate": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:describe": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:api:download-proxy": {
+     "args": [
+      "APIINSTANCEID",
+      "TARGETPATH"
+     ],
+     "flags": [
+      "gatewayVersion"
+     ]
+    },
+    "api-mgr:api:edit": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "apiInstanceLabel",
+      "deploymentType",
+      "endpointUri",
+      "inboundSecretGroupId",
+      "inboundTlsContextId",
+      "isFlex",
+      "muleVersion4OrAbove",
+      "outboundSecretGroupId",
+      "outboundTlsContextId",
+      "path",
+      "port",
+      "providerId",
+      "referencesUserDomain",
+      "responseTimeout",
+      "routing",
+      "scheme",
+      "serviceName",
+      "serviceNamespace",
+      "servicePort",
+      "type",
+      "updateApisInSamePort",
+      "uri",
+      "withProxy"
+     ]
+    },
+    "api-mgr:api:list": {
+     "args": [],
+     "flags": [
+      "apiVersion",
+      "assetId",
+      "instanceLabel",
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "api-mgr:api:manage": {
+     "args": [
+      "ASSETID",
+      "ASSETVERSION",
+      "[GROUPID]"
+     ],
+     "flags": [
+      "apiInstanceLabel",
+      "deploymentType",
+      "endpointUri",
+      "inboundSecretGroupId",
+      "inboundTlsContextId",
+      "isFlex",
+      "muleVersion4OrAbove",
+      "outboundSecretGroupId",
+      "outboundTlsContextId",
+      "path",
+      "port",
+      "providerId",
+      "referencesUserDomain",
+      "responseTimeout",
+      "routing",
+      "scheme",
+      "serviceName",
+      "serviceNamespace",
+      "servicePort",
+      "type",
+      "uri",
+      "withProxy"
+     ]
+    },
+    "api-mgr:api:promote": {
+     "args": [
+      "APIINSTANCEID",
+      "SOURCEENVID"
+     ],
+     "flags": [
+      "copyAlerts",
+      "copyPolicies",
+      "copyTiers",
+      "providerId"
+     ]
+    },
+    "api-mgr:api:redeploy": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "applicationName",
+      "environmentName",
+      "gatewayVersion",
+      "javaVersion",
+      "overwrite",
+      "releaseChannel",
+      "target"
+     ]
+    },
+    "api-mgr:api:undeprecate": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:application:add-owner": {
+     "args": [
+      "APPLICATIONID",
+      "ID",
+      "ENTITYTYPE"
+     ],
+     "flags": []
+    },
+    "api-mgr:application:import": {
+     "args": [
+      "PROVIDERID",
+      "CLIENTID"
+     ],
+     "flags": [
+      "description",
+      "url"
+     ]
+    },
+    "api-mgr:application:possible-owners-list": {
+     "args": [],
+     "flags": [
+      "limit",
+      "offset",
+      "search"
+     ]
+    },
+    "api-mgr:client-provider:list-importable": {
+     "args": [],
+     "flags": []
+    },
+    "api-mgr:contract:delete": {
+     "args": [
+      "APIINSTANCEID",
+      "CLIENTID"
+     ],
+     "flags": []
+    },
+    "api-mgr:contract:list": {
+     "args": [
+      "APIINSTANCEID",
+      "[SEARCHTEXT]"
+     ],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "api-mgr:policy:apply": {
+     "args": [
+      "APIINSTANCEID",
+      "POLICYID"
+     ],
+     "flags": [
+      "allowDuplicated",
+      "config",
+      "configFile",
+      "groupId",
+      "label",
+      "pointcut",
+      "policyVersion",
+      "upstreamId"
+     ]
+    },
+    "api-mgr:policy:describe": {
+     "args": [
+      "POLICYID"
+     ],
+     "flags": [
+      "groupId",
+      "policyVersion"
+     ]
+    },
+    "api-mgr:policy:disable": {
+     "args": [
+      "APIINSTANCEID",
+      "POLICYID"
+     ],
+     "flags": []
+    },
+    "api-mgr:policy:edit": {
+     "args": [
+      "APIINSTANCEID",
+      "POLICYID"
+     ],
+     "flags": [
+      "allowDuplicated",
+      "config",
+      "configFile",
+      "label",
+      "pointcut"
+     ]
+    },
+    "api-mgr:policy:enable": {
+     "args": [
+      "APIINSTANCEID",
+      "POLICYID"
+     ],
+     "flags": []
+    },
+    "api-mgr:policy:list": {
+     "args": [
+      "[APIINSTANCEID]"
+     ],
+     "flags": [
+      "muleVersion4OrAbove"
+     ]
+    },
+    "api-mgr:policy:order": {
+     "args": [
+      "APIINSTANCEID",
+      "[ORDER]"
+     ],
+     "flags": [
+      "commaSeparated"
+     ]
+    },
+    "api-mgr:policy:remove": {
+     "args": [
+      "APIINSTANCEID",
+      "POLICYID"
+     ],
+     "flags": []
+    },
+    "api-mgr:tier:add": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "autoApprove"
+     ]
+    },
+    "api-mgr:tier:copy": {
+     "args": [
+      "SOURCEAPIINSTANCEID",
+      "TARGETAPIINSTANCEID"
+     ],
+     "flags": []
+    },
+    "api-mgr:tier:delete": {
+     "args": [
+      "APIINSTANCEID",
+      "TIERID"
+     ],
+     "flags": []
+    },
+    "api-mgr:tier:list": {
+     "args": [
+      "APIINSTANCEID",
+      "[SEARCHTEXT]"
+     ],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "api-mgr:upstream:add": {
+     "args": [
+      "APIINSTANCEID",
+      "URI"
+     ],
+     "flags": [
+      "label",
+      "tlsContextId",
+      "tlsContextSecretGroupId"
+     ]
+    },
+    "api-mgr:upstream:bulk-edit": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": [
+      "tlsContextId",
+      "tlsContextSecretGroupId"
+     ]
+    },
+    "api-mgr:upstream:delete": {
+     "args": [
+      "APIINSTANCEID",
+      "UPSTREAMID"
+     ],
+     "flags": []
+    },
+    "api-mgr:upstream:edit": {
+     "args": [
+      "APIINSTANCEID",
+      "UPSTREAMID"
+     ],
+     "flags": [
+      "label",
+      "tlsContextId",
+      "tlsContextSecretGroupId",
+      "uri"
+     ]
+    },
+    "api-mgr:upstream:list": {
+     "args": [
+      "APIINSTANCEID"
+     ],
+     "flags": []
+    }
+   }
+  },
+  "anypoint-cli-cloudhub-plugin": {
+   "version": "1.4.13",
+   "commands": {
+    "cloudhub:load-balancer:allowlist:add": {
+     "args": [
+      "NAME",
+      "CIDRBLOCK"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:allowlist:remove": {
+     "args": [
+      "NAME",
+      "CIDRBLOCK"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:create": {
+     "args": [
+      "[NAME]",
+      "[VPC]",
+      "[CERTIFICATE]",
+      "[PRIVATEKEY]"
+     ],
+     "flags": [
+      "clientCertificate",
+      "crl",
+      "http",
+      "verificationMode"
+     ]
+    },
+    "cloudhub:load-balancer:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:describe": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:dynamic-ips:disable": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:dynamic-ips:enable": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:list": {
+     "args": [],
+     "flags": []
+    },
+    "cloudhub:load-balancer:mappings:add": {
+     "args": [
+      "NAME",
+      "INPUTURI",
+      "APPNAME",
+      "APPURI",
+      "[CERTIFICATENAME]"
+     ],
+     "flags": [
+      "upstreamProtocol"
+     ]
+    },
+    "cloudhub:load-balancer:mappings:describe": {
+     "args": [
+      "NAME",
+      "[CERTIFICATENAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:mappings:remove": {
+     "args": [
+      "NAME",
+      "INDEX",
+      "[CERTIFICATENAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:ssl-endpoint:add": {
+     "args": [
+      "NAME",
+      "CERTIFICATE",
+      "PRIVATEKEY"
+     ],
+     "flags": [
+      "clientCertificate",
+      "crl",
+      "verificationMode"
+     ]
+    },
+    "cloudhub:load-balancer:ssl-endpoint:describe": {
+     "args": [
+      "NAME",
+      "CERTIFICATENAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:ssl-endpoint:remove": {
+     "args": [
+      "NAME",
+      "CERTIFICATENAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:ssl-endpoint:setDefault": {
+     "args": [
+      "NAME",
+      "CERTIFICATENAME"
+     ],
+     "flags": [
+      "http"
+     ]
+    },
+    "cloudhub:load-balancer:start": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:stop": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:whitelist:add": {
+     "args": [
+      "NAME",
+      "CIDRBLOCK"
+     ],
+     "flags": []
+    },
+    "cloudhub:load-balancer:whitelist:remove": {
+     "args": [
+      "NAME",
+      "CIDRBLOCK"
+     ],
+     "flags": []
+    },
+    "cloudhub:region:list": {
+     "args": [
+      "[FILE]"
+     ],
+     "flags": []
+    },
+    "cloudhub:runtime:list": {
+     "args": [],
+     "flags": []
+    },
+    "cloudhub:vpc:business-groups:add": {
+     "args": [
+      "VPC",
+      "BUSINESSGROUPS..."
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:business-groups:remove": {
+     "args": [
+      "VPC",
+      "BUSINESSGROUPS..."
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:create": {
+     "args": [
+      "NAME",
+      "REGION",
+      "CIDRBLOCK",
+      "[ENVIRONMENTS]"
+     ],
+     "flags": [
+      "default"
+     ]
+    },
+    "cloudhub:vpc:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "force"
+     ]
+    },
+    "cloudhub:vpc:describe": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:dns-servers:set": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "domain",
+      "server"
+     ]
+    },
+    "cloudhub:vpc:dns-servers:unset": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:environments:add": {
+     "args": [
+      "VPC",
+      "ENVIRONMENTS..."
+     ],
+     "flags": [
+      "default"
+     ]
+    },
+    "cloudhub:vpc:environments:remove": {
+     "args": [
+      "VPC",
+      "ENVIRONMENTS..."
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:firewall-rules:add": {
+     "args": [
+      "VPC",
+      "CIDRBLOCK",
+      "PROTOCOL",
+      "FROMPORT",
+      "TOPORT"
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:firewall-rules:describe": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:firewall-rules:remove": {
+     "args": [
+      "VPC",
+      "INDEX"
+     ],
+     "flags": []
+    },
+    "cloudhub:vpc:list": {
+     "args": [],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "runtime-mgr:application:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:application:deploy": {
+     "args": [
+      "NAME",
+      "DEPLOYMENTTARGETID",
+      "RUNTIMEVERSION",
+      "ARTIFACTID"
+     ],
+     "flags": [
+      "assetVersion",
+      "groupId",
+      "instanceType",
+      "javaVersion",
+      "pathRewrite",
+      "propertiesFile",
+      "property",
+      "publicEndpoints",
+      "releaseChannel",
+      "replicaSize",
+      "replicas",
+      "scopeLoggingConfig",
+      "scopeLoggingConfigFile",
+      "secureProperty",
+      "updateStrategy"
+     ]
+    },
+    "runtime-mgr:application:describe": {
+     "args": [
+      "APPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:application:download-logs": {
+     "args": [
+      "APPID",
+      "SPECID",
+      "DIRECTORY"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:application:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:application:logs": {
+     "args": [
+      "APPID",
+      "SPECID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:application:modify": {
+     "args": [
+      "APPID"
+     ],
+     "flags": [
+      "artifactId",
+      "assetVersion",
+      "groupId",
+      "instanceType",
+      "javaVersion",
+      "pathRewrite",
+      "propertiesFile",
+      "property",
+      "publicEndpoints",
+      "releaseChannel",
+      "replicaSize",
+      "replicas",
+      "runtimeVersion",
+      "scopeLoggingConfig",
+      "scopeLoggingConfigFile",
+      "secureProperty",
+      "updateStrategy"
+     ]
+    },
+    "runtime-mgr:application:start": {
+     "args": [
+      "APPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:application:stop": {
+     "args": [
+      "APPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-alert-history:describe": {
+     "args": [
+      "[NAME]"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-alert:list": {
+     "args": [],
+     "flags": [
+      "limit",
+      "offset"
+     ]
+    },
+    "runtime-mgr:cloudhub-application:copy": {
+     "args": [
+      "SOURCE",
+      "TARGET"
+     ],
+     "flags": [
+      "property"
+     ]
+    },
+    "runtime-mgr:cloudhub-application:copy-replace": {
+     "args": [
+      "SOURCE",
+      "TARGET"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:deploy": {
+     "args": [
+      "NAME",
+      "ZIPFILE"
+     ],
+     "flags": [
+      "javaVersion",
+      "propertiesFile",
+      "property",
+      "region",
+      "releaseChannel",
+      "runtime",
+      "timeout",
+      "workerSize",
+      "workers"
+     ]
+    },
+    "runtime-mgr:cloudhub-application:describe": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:download-logs": {
+     "args": [
+      "NAME",
+      "DIRECTORY"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:modify": {
+     "args": [
+      "NAME",
+      "[ZIPFILE]"
+     ],
+     "flags": [
+      "javaVersion",
+      "propertiesFile",
+      "property",
+      "region",
+      "releaseChannel",
+      "runtime",
+      "workerSize",
+      "workers"
+     ]
+    },
+    "runtime-mgr:cloudhub-application:restart": {
+     "args": [
+      "APPLICATIONNAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:revert-runtime": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:start": {
+     "args": [
+      "APPLICATIONNAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:stop": {
+     "args": [
+      "APPLICATIONNAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cloudhub-application:tail-logs": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    }
+   }
+  },
+  "anypoint-cli-datagraph-plugin": {
+   "version": "1.0.9",
+   "commands": {
+    "datagraph:load-balancer-config:add": {
+     "args": [
+      "DLBURL"
+     ],
+     "flags": []
+    },
+    "datagraph:load-balancer-config:describe": {
+     "args": [],
+     "flags": []
+    },
+    "datagraph:load-balancer-config:remove": {
+     "args": [],
+     "flags": []
+    }
+   }
+  },
+  "@salesforce/anypoint-cli-dx-mule-plugin": {
+   "version": "1.3.2",
+   "commands": {
+    "dx:mule:describe-connector": {
+     "args": [],
+     "flags": [
+      "config-name",
+      "connector",
+      "name",
+      "type"
+     ]
+    },
+    "dx:mule:jdk:download": {
+     "args": [],
+     "flags": [
+      "version"
+     ]
+    },
+    "dx:mule:project:create": {
+     "args": [
+      "PROJECTNAME"
+     ],
+     "flags": [
+      "dependencies",
+      "group-id",
+      "mule-version"
+     ]
+    },
+    "dx:mule:runtime:download": {
+     "args": [],
+     "flags": [
+      "version"
+     ]
+    },
+    "dx:mule:runtime:list": {
+     "args": [],
+     "flags": []
+    },
+    "dx:mule:runtime:path": {
+     "args": [],
+     "flags": [
+      "set"
+     ]
+    }
+   }
+  },
+  "anypoint-cli-exchange-plugin": {
+   "version": "1.0.12",
+   "commands": {
+    "exchange:asset:copy": {
+     "args": [
+      "SOURCE",
+      "TARGET"
+     ],
+     "flags": [
+      "targetOrganizationId"
+     ]
+    },
+    "exchange:asset:delete": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": [
+      "force"
+     ]
+    },
+    "exchange:asset:deprecate": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": []
+    },
+    "exchange:asset:describe": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": []
+    },
+    "exchange:asset:download": {
+     "args": [
+      "[ASSETIDENTIFIER]",
+      "[DIRECTORY]"
+     ],
+     "flags": [
+      "force"
+     ]
+    },
+    "exchange:asset:list": {
+     "args": [
+      "[SEARCHTEXT]"
+     ],
+     "flags": [
+      "limit",
+      "offset",
+      "organizationId"
+     ]
+    },
+    "exchange:asset:modify": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": [
+      "name",
+      "tags"
+     ]
+    },
+    "exchange:asset:mutableDataUpload": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "[PROPERTIES]"
+     ],
+     "flags": [
+      "categories",
+      "docs",
+      "fields",
+      "tags"
+     ]
+    },
+    "exchange:asset:page:delete": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "[PAGENAME]"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:page:download": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "DIRECTORY",
+      "[PAGENAME]"
+     ],
+     "flags": []
+    },
+    "exchange:asset:page:list": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": []
+    },
+    "exchange:asset:page:modify": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "PAGENAME"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:page:update": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "PAGENAME",
+      "MDPATH"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:page:upload": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "PAGENAME",
+      "MDPATH"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:resource:delete": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "RESOURCEPATH"
+     ],
+     "flags": []
+    },
+    "exchange:asset:resource:download": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "RESOURCEPATH",
+      "FILEPATH"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:resource:list": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": [
+      "draft"
+     ]
+    },
+    "exchange:asset:resource:upload": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "FILEPATH"
+     ],
+     "flags": [
+      "force",
+      "name"
+     ]
+    },
+    "exchange:asset:undeprecate": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": []
+    },
+    "exchange:asset:updateStatus": {
+     "args": [
+      "ASSETIDENTIFIER"
+     ],
+     "flags": [
+      "status"
+     ]
+    },
+    "exchange:asset:upload": {
+     "args": [
+      "ASSETIDENTIFIER",
+      "[PROPERTIES]"
+     ],
+     "flags": [
+      "categories",
+      "dependencies",
+      "description",
+      "fields",
+      "files",
+      "headers",
+      "keywords",
+      "name",
+      "properties",
+      "status",
+      "tags",
+      "type"
+     ]
+    }
+   }
+  },
+  "anypoint-cli-runtime-mgr-plugin": {
+   "version": "1.0.9",
+   "commands": {
+    "runtime-mgr:cluster:add:server": {
+     "args": [
+      "CLUSTERID",
+      "SERVERID",
+      "[SERVERIP]"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cluster:create": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "multicast",
+      "server"
+     ]
+    },
+    "runtime-mgr:cluster:delete": {
+     "args": [
+      "CLUSTERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cluster:describe": {
+     "args": [
+      "CLUSTERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:cluster:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:cluster:modify": {
+     "args": [
+      "CLUSTERID"
+     ],
+     "flags": [
+      "name"
+     ]
+    },
+    "runtime-mgr:cluster:remove:server": {
+     "args": [
+      "CLUSTERID",
+      "SERVERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:gateways:managed:create": {
+     "args": [
+      "NAME",
+      "TARGETID",
+      "SIZE"
+     ],
+     "flags": [
+      "connectionIdleTimeout",
+      "loggingLevel",
+      "publicUrl",
+      "releaseChannel",
+      "tracingLabels",
+      "tracingSampling",
+      "upstreamResponseTimeout",
+      "version"
+     ]
+    },
+    "runtime-mgr:gateways:managed:delete": {
+     "args": [
+      "MANAGEDGATEWAYID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:gateways:managed:describe": {
+     "args": [
+      "MANAGEDGATEWAYID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:gateways:managed:edit": {
+     "args": [
+      "MANAGEDGATEWAYID"
+     ],
+     "flags": [
+      "connectionIdleTimeout",
+      "loggingLevel",
+      "publicUrl",
+      "releaseChannel",
+      "tracingLabels",
+      "tracingSampling",
+      "upstreamResponseTimeout",
+      "version"
+     ]
+    },
+    "runtime-mgr:gateways:managed:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:gateways:managed:start": {
+     "args": [
+      "MANAGEDGATEWAYID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:gateways:managed:stop": {
+     "args": [
+      "MANAGEDGATEWAYID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:rtf:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:server:delete": {
+     "args": [
+      "SERVERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:server:describe": {
+     "args": [
+      "SERVERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:server:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:server:modify": {
+     "args": [
+      "SERVERID"
+     ],
+     "flags": [
+      "name"
+     ]
+    },
+    "runtime-mgr:server:token": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:add:server": {
+     "args": [
+      "SERVERGROUPID",
+      "SERVERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:create": {
+     "args": [
+      "NAME",
+      "[SERVERIDS]"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:delete": {
+     "args": [
+      "SERVERGROUPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:describe": {
+     "args": [
+      "SERVERGROUPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:list": {
+     "args": [],
+     "flags": []
+    },
+    "runtime-mgr:serverGroup:modify": {
+     "args": [
+      "SERVERGROUPID"
+     ],
+     "flags": [
+      "name"
+     ]
+    },
+    "runtime-mgr:serverGroup:remove:server": {
+     "args": [
+      "SERVERGROUPID",
+      "SERVERID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-alert:create": {
+     "args": [
+      "NAME"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-alert:describe": {
+     "args": [
+      "ALERTID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-alert:list": {
+     "args": [],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "runtime-mgr:standalone-alert:modify": {
+     "args": [
+      "ALERTID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:artifact": {
+     "args": [
+      "IDENTIFIER",
+      "DIRECTORY"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:copy": {
+     "args": [
+      "SOURCE",
+      "TARGET",
+      "TARGETIDENTIFIER"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:delete": {
+     "args": [
+      "IDENTIFIER"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:deploy": {
+     "args": [
+      "TARGETIDENTIFIER",
+      "NAME",
+      "ZIPFILE"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:describe": {
+     "args": [
+      "APPID"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:list": {
+     "args": [],
+     "flags": [
+      "limit",
+      "offset",
+      "sort"
+     ]
+    },
+    "runtime-mgr:standalone-application:modify": {
+     "args": [
+      "IDENTIFIER",
+      "[ZIPFILE]"
+     ],
+     "flags": [
+      "insight",
+      "log"
+     ]
+    },
+    "runtime-mgr:standalone-application:restart": {
+     "args": [
+      "IDENTIFIER"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:start": {
+     "args": [
+      "IDENTIFIER"
+     ],
+     "flags": []
+    },
+    "runtime-mgr:standalone-application:stop": {
+     "args": [
+      "IDENTIFIER"
+     ],
+     "flags": []
+    }
+   }
+  },
+  "anypoint-cli-secrets-mgr-plugin": {
+   "version": "1.0.7",
+   "commands": {
+    "secrets-mgr:certificate:create": {
+     "args": [],
+     "flags": [
+      "cert-file",
+      "expiration-date",
+      "group-id",
+      "name",
+      "type"
+     ]
+    },
+    "secrets-mgr:certificate:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:certificate:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:certificate:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:certificate:replace": {
+     "args": [],
+     "flags": [
+      "cert-file",
+      "expiration-date",
+      "group-id",
+      "id",
+      "name",
+      "type"
+     ]
+    },
+    "secrets-mgr:keystore:create": {
+     "args": [],
+     "flags": [
+      "algorithm",
+      "alias",
+      "capath-file",
+      "cert-file",
+      "expiration-date",
+      "group-id",
+      "key-file",
+      "key-passphrase",
+      "keystore-file",
+      "name",
+      "store-passphrase",
+      "type"
+     ]
+    },
+    "secrets-mgr:keystore:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:keystore:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:keystore:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:keystore:replace": {
+     "args": [],
+     "flags": [
+      "algorithm",
+      "alias",
+      "capath-file",
+      "cert-file",
+      "expiration-date",
+      "group-id",
+      "id",
+      "key-file",
+      "key-passphrase",
+      "keystore-file",
+      "name",
+      "store-passphrase",
+      "type"
+     ]
+    },
+    "secrets-mgr:secret-group:create": {
+     "args": [],
+     "flags": [
+      "downloadable",
+      "name"
+     ]
+    },
+    "secrets-mgr:secret-group:delete": {
+     "args": [],
+     "flags": [
+      "id"
+     ]
+    },
+    "secrets-mgr:secret-group:describe": {
+     "args": [],
+     "flags": [
+      "id"
+     ]
+    },
+    "secrets-mgr:secret-group:list": {
+     "args": [],
+     "flags": []
+    },
+    "secrets-mgr:secret-group:modify": {
+     "args": [],
+     "flags": [
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:shared-secret:create": {
+     "args": [],
+     "flags": [
+      "access-key-id",
+      "content",
+      "expiration-date",
+      "group-id",
+      "key",
+      "name",
+      "secret-access-key",
+      "secret-password",
+      "secret-username",
+      "type"
+     ]
+    },
+    "secrets-mgr:shared-secret:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:shared-secret:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:shared-secret:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:shared-secret:replace": {
+     "args": [],
+     "flags": [
+      "access-key-id",
+      "content",
+      "expiration-date",
+      "group-id",
+      "id",
+      "key",
+      "name",
+      "secret-access-key",
+      "secret-password",
+      "secret-username",
+      "type"
+     ]
+    },
+    "secrets-mgr:tls-context:flex-gateway:create": {
+     "args": [],
+     "flags": [
+      "cipher"
+     ]
+    },
+    "secrets-mgr:tls-context:flex-gateway:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:tls-context:flex-gateway:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:tls-context:flex-gateway:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:tls-context:flex-gateway:replace": {
+     "args": [],
+     "flags": [
+      "cipher"
+     ]
+    },
+    "secrets-mgr:tls-context:mule:create": {
+     "args": [],
+     "flags": [
+      "cipher"
+     ]
+    },
+    "secrets-mgr:tls-context:mule:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:tls-context:mule:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:tls-context:mule:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:tls-context:mule:replace": {
+     "args": [],
+     "flags": [
+      "cipher"
+     ]
+    },
+    "secrets-mgr:tls-context:tls-context-list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:truststore:create": {
+     "args": [],
+     "flags": [
+      "algorithm",
+      "expiration-date",
+      "group-id",
+      "name",
+      "store-passphrase",
+      "truststore-file",
+      "type"
+     ]
+    },
+    "secrets-mgr:truststore:describe": {
+     "args": [],
+     "flags": [
+      "group-id",
+      "id"
+     ]
+    },
+    "secrets-mgr:truststore:list": {
+     "args": [],
+     "flags": [
+      "group-id"
+     ]
+    },
+    "secrets-mgr:truststore:modify": {
+     "args": [],
+     "flags": [
+      "expiration-date",
+      "group-id",
+      "id",
+      "name"
+     ]
+    },
+    "secrets-mgr:truststore:replace": {
+     "args": [],
+     "flags": [
+      "algorithm",
+      "expiration-date",
+      "group-id",
+      "id",
+      "name",
+      "store-passphrase",
+      "truststore-file",
+      "type"
+     ]
+    }
+   }
+  },
+  "mulesoft-anypoint-cli-agent-fabric-plugin": {
+   "version": "1.6.1",
+   "commands": {
+    "agent-network:project:agent-console": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:broker:create": {
+     "args": [],
+     "flags": [
+      "debug",
+      "name",
+      "path"
+     ]
+    },
+    "agent-network:project:build": {
+     "args": [],
+     "flags": [
+      "debug",
+      "forceUpdate",
+      "path"
+     ]
+    },
+    "agent-network:project:create": {
+     "args": [],
+     "flags": [
+      "api-version",
+      "asset-id",
+      "asset-version",
+      "debug",
+      "empty-project",
+      "group-id",
+      "name",
+      "output-dir",
+      "tab-size"
+     ]
+    },
+    "agent-network:project:deploy": {
+     "args": [],
+     "flags": [
+      "debug",
+      "deployment-properties-file",
+      "deployment-property",
+      "disable-autopublish",
+      "disable-tracing",
+      "dont-wait-for-agent-network",
+      "egress-gw",
+      "gateway",
+      "ingress-gw",
+      "max-retries",
+      "path",
+      "process-timeout",
+      "property",
+      "request-timeout",
+      "target-space"
+     ]
+    },
+    "agent-network:project:export-logs": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:mcp:introspect": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:publish": {
+     "args": [],
+     "flags": [
+      "debug",
+      "path"
+     ]
+    },
+    "agent-network:project:run-local": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:secrets": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:stop-local": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:project:undeploy": {
+     "args": [],
+     "flags": [
+      "api-version",
+      "debug",
+      "dry-run",
+      "gav",
+      "path",
+      "process-timeout",
+      "request-timeout"
+     ]
+    },
+    "agent-network:project:unpublish": {
+     "args": [],
+     "flags": [
+      "api-version",
+      "debug",
+      "dry-run",
+      "gav",
+      "hard-delete",
+      "path"
+     ]
+    },
+    "agent-network:setup:dependencies": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "agent-network:setup:gateways": {
+     "args": [],
+     "flags": [
+      "debug",
+      "dont-wait-for-gateways-running",
+      "egress-gw",
+      "gateway",
+      "ingress-gw",
+      "target-space",
+      "update"
+     ]
+    }
+   }
+  },
+  "mulesoft-anypoint-cli-designcenter-plugin": {
+   "version": "1.0.22",
+   "commands": {
+    "designcenter:project:create": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "format",
+      "fragmentType",
+      "type",
+      "version"
+     ]
+    },
+    "designcenter:project:delete": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "force"
+     ]
+    },
+    "designcenter:project:download": {
+     "args": [
+      "NAME",
+      "TARGETDIR"
+     ],
+     "flags": [
+      "branch",
+      "resolveDependenciesTimeout"
+     ]
+    },
+    "designcenter:project:list": {
+     "args": [
+      "[SEARCHTEXT]"
+     ],
+     "flags": [
+      "pageIndex",
+      "pageSize"
+     ]
+    },
+    "designcenter:project:publish": {
+     "args": [
+      "NAME"
+     ],
+     "flags": [
+      "apiVersion",
+      "assetId",
+      "branch",
+      "groupId",
+      "main",
+      "name",
+      "status",
+      "version"
+     ]
+    },
+    "designcenter:project:upload": {
+     "args": [
+      "NAME",
+      "PROJDIR"
+     ],
+     "flags": [
+      "branch",
+      "include-dot-files"
+     ]
+    }
+   }
+  },
+  "mulesoft-anypoint-cli-governance-plugin": {
+   "version": "1.1.5",
+   "commands": {
+    "governance:api:evaluate": {
+     "args": [],
+     "flags": [
+      "api",
+      "criteria"
+     ]
+    },
+    "governance:api:inspect": {
+     "args": [
+      "INPUT"
+     ],
+     "flags": []
+    },
+    "governance:api:validate": {
+     "args": [
+      "SPEC"
+     ],
+     "flags": [
+      "force",
+      "remote",
+      "remote-rulesets",
+      "rulesets"
+     ]
+    },
+    "governance:document": {
+     "args": [
+      "RULESET",
+      "FILE"
+     ],
+     "flags": [
+      "single-page"
+     ]
+    },
+    "governance:profile:create": {
+     "args": [
+      "PROFILE-NAME",
+      "RULESET-ASSET-IDENTIFIERS"
+     ],
+     "flags": [
+      "criteria",
+      "description"
+     ]
+    },
+    "governance:profile:delete": {
+     "args": [
+      "PROFILE-ID"
+     ],
+     "flags": []
+    },
+    "governance:profile:info": {
+     "args": [
+      "PROFILEID"
+     ],
+     "flags": []
+    },
+    "governance:profile:list": {
+     "args": [],
+     "flags": []
+    },
+    "governance:profile:update": {
+     "args": [
+      "PROFILEID"
+     ],
+     "flags": [
+      "criteria",
+      "description",
+      "profile-name",
+      "ruleset-asset-identifiers"
+     ]
+    },
+    "governance:ruleset:classes": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:clone": {
+     "args": [
+      "RULESET",
+      "TITLE",
+      "DESCRIPTION"
+     ],
+     "flags": [
+      "error",
+      "info",
+      "remote",
+      "remove",
+      "warning"
+     ]
+    },
+    "governance:ruleset:completions": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:constraints": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:domains": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:generate": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:info": {
+     "args": [
+      "RULESET"
+     ],
+     "flags": [
+      "remote"
+     ]
+    },
+    "governance:ruleset:init": {
+     "args": [
+      "SCHEMA"
+     ],
+     "flags": [
+      "name",
+      "types"
+     ]
+    },
+    "governance:ruleset:properties": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:resolve": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:simplify": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:validate": {
+     "args": [
+      "RULESET"
+     ],
+     "flags": []
+    },
+    "governance:ruleset:validate-authoring": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:ruleset:version": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    },
+    "governance:update": {
+     "args": [],
+     "flags": [],
+     "unparsed": true
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,12 @@
+# build output
+/dist/
+/build/
+*.exe
+
+# test output
+coverage.out
+lib.out
+test-report.json
+
+# a `go build` run inside cmd/anypoint
+/cmd/anypoint/anypoint

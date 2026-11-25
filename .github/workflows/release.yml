@@ -1,0 +1,225 @@
+name: Release
+
+# Pushing a tag vX.Y.Z (or vX.Y.Z-rc.1, published as a pre-release) builds the
+# CLI at that version with GoReleaser (.goreleaser.yaml: platforms, archives,
+# SBOMs, checksums) and publishes a GitHub release with, per platform
+# (OS_ARCH, e.g. linux_arm64):
+#   anypoint_X.Y.Z_OS_ARCH.tar.gz (.zip on Windows)        binary, LICENSE, README, CHANGELOG
+#   anypoint_X.Y.Z_OS_ARCH.cdx.json                        CycloneDX SBOM of the binary
+#   anypoint_X.Y.Z_OS_ARCH.<ext>.provenance.sigstore.json  SLSA build provenance (Sigstore bundle)
+#   anypoint_X.Y.Z_OS_ARCH.<ext>.sbom.sigstore.json        SBOM attestation (Sigstore bundle)
+# and SHA256SUMS over the archives and SBOMs.
+# If the release already exists (e.g. created by release-please or in the
+# GitHub UI), the assets are attached to it; existing assets are never replaced.
+# Every attestation is verified with `gh attestation verify` before publishing.
+#
+# release-please (.github/workflows/release-please.yml) calls this workflow with
+# the tag it has just created, because tags pushed with the workflow token do
+# not trigger workflows. Called that way, this file is still the signer
+# workflow of the attestations.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag vX.Y.Z to build and release, created by release-please at the calling commit
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  GORELEASER_VERSION: v2.20.3
+
+jobs:
+  # Tests and scans the tagged commit, then builds every platform with GoReleaser.
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      archives: ${{ steps.archives.outputs.json }}
+    steps:
+      - name: Check tag
+        run: |
+          if [[ ! "$TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::tag $TAG is not vMAJOR.MINOR.PATCH[-prerelease]"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0 # GoReleaser reads the tag and commit date from git
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # Shipped binaries are built with the newest patched Go (standard
+          # library fixes); go.mod's minimum is tested by CI for library users.
+          go-version: stable
+          check-latest: true
+          # no module/build cache: a release is built from fresh downloads only
+          cache: false
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Vulnerability scan (govulncheck)
+        # fails the release on a known vulnerability reachable from the code
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+
+      - name: Install syft (GoReleaser's SBOM generator)
+        uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+
+      - name: Build, archive, SBOM, checksum
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+        with:
+          distribution: goreleaser
+          version: ${{ env.GORELEASER_VERSION }}
+          # publishing happens after attestation, in the publish job
+          args: release --clean --skip=publish
+
+      - name: Check the runner's own binary
+        run: dist/anypoint_linux_amd64_v1/anypoint version | grep -F "anypoint ${TAG#v} "
+
+      - id: archives
+        name: Archives to attest
+        run: |
+          json=$(jq -c '[.[] | select(.type == "Archive")
+                         | {archive: .name, base: (.name | sub("\\.(tar\\.gz|zip)$"; ""))}]' dist/artifacts.json)
+          echo "json=$json" >> "$GITHUB_OUTPUT"
+          echo "$json" | jq .
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/*.cdx.json
+            dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  # One job per archive: SLSA provenance and SBOM attestations, verified.
+  attest:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write     # Sigstore signing certificate for the attestations
+      attestations: write
+      artifact-metadata: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include: ${{ fromJSON(needs.build.outputs.archives) }}
+    name: attest ${{ matrix.base }}
+    env:
+      ARCHIVE: dist/${{ matrix.archive }}
+      SBOM: dist/${{ matrix.base }}.cdx.json
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist
+
+      - name: Check against SHA256SUMS
+        run: |
+          cd dist && sha256sum --ignore-missing -c SHA256SUMS | grep -F "${{ matrix.archive }}: OK"
+
+      - name: Attest build provenance
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: ${{ env.ARCHIVE }}
+
+      - name: Attest SBOM
+        id: sbom
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: ${{ env.ARCHIVE }}
+          sbom-path: ${{ env.SBOM }}
+
+      - name: Verify attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROVENANCE_BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
+          SBOM_BUNDLE: ${{ steps.sbom.outputs.bundle-path }}
+        run: |
+          mkdir -p bundles
+          cp "$PROVENANCE_BUNDLE" "bundles/${{ matrix.archive }}.provenance.sigstore.json"
+          cp "$SBOM_BUNDLE" "bundles/${{ matrix.archive }}.sbom.sigstore.json"
+          # signed by this workflow, from this ref and commit, on a GitHub-hosted
+          # runner; checked against the attestations API and the published bundles
+          common=(--repo "$GITHUB_REPOSITORY"
+                  --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml"
+                  --source-ref "$GITHUB_REF"
+                  --source-digest "$GITHUB_SHA"
+                  --deny-self-hosted-runners)
+          verify() { # predicate type, published bundle
+            gh attestation verify "$ARCHIVE" "${common[@]}" --predicate-type "$1"
+            gh attestation verify "$ARCHIVE" "${common[@]}" --predicate-type "$1" --bundle "$2"
+          }
+          verify https://slsa.dev/provenance/v1 "bundles/${{ matrix.archive }}.provenance.sigstore.json"
+          verify https://cyclonedx.org/bom "bundles/${{ matrix.archive }}.sbom.sigstore.json"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundles-${{ matrix.base }}
+          path: bundles/*
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: attest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write     # create the release / upload assets
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: bundles-*
+          merge-multiple: true
+          path: dist
+
+      - name: Publish release
+        # Attaches the assets to an existing release (release-please, GitHub UI),
+        # keeping its title and notes, or creates it. Never replaces an asset.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -l dist
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG exists: attaching assets"
+            gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY"
+          else
+            prerelease=()
+            if [[ "$TAG" == *-* ]]; then prerelease=(--prerelease); fi
+            # notes: the version's CHANGELOG.md section, else generated by GitHub
+            awk -v v="${TAG#v}" '/^## / { on = index($0, "## [" v "]") == 1; next } on' CHANGELOG.md 2>/dev/null > "$RUNNER_TEMP/notes.md" || true
+            if [[ -s "$RUNNER_TEMP/notes.md" ]]; then notes=(--notes-file "$RUNNER_TEMP/notes.md"); else notes=(--generate-notes); fi
+            gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag "${notes[@]}" \
+              --title "$TAG" "${prerelease[@]}"
+          fi

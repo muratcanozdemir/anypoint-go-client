@@ -1,0 +1,73 @@
+# GoReleaser builds the CLI for every platform, packages it, writes SBOMs and
+# checksums. Publishing is done by .github/workflows/release.yml after the
+# archives are attested, so the release job runs this with --skip=publish.
+#
+#   make snapshot   # local dry run into dist/ (no tag needed, SBOMs skipped)
+#
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+project_name: anypoint
+
+builds:
+  - id: anypoint
+    main: ./cmd/anypoint
+    binary: anypoint
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+      - -buildvcs=true
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+    # reproducible binaries: the commit time, not the build time
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: anypoint
+    ids: [anypoint]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: true
+    # reproducible archives: fixed owner and mtime for every entry
+    builds_info: &fileinfo
+      owner: root
+      group: root
+      mtime: "{{ .CommitDate }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - src: LICENSE
+        info: *fileinfo
+      - src: README.md
+        info: *fileinfo
+      - src: CHANGELOG.md
+        info: *fileinfo
+
+# CycloneDX SBOM of each binary, from its embedded build info (needs syft on PATH).
+sboms:
+  - id: binaries
+    artifacts: binary
+    documents:
+      - "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.cdx.json"
+    args: ["$artifact", "--output", "cyclonedx-json=$document"]
+
+checksum:
+  name_template: SHA256SUMS
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot+{{ .ShortCommit }}"
+
+# Release notes come from CHANGELOG.md (release-please), not from GoReleaser.
+changelog:
+  disable: true
+
+# Named explicitly so `goreleaser check` and snapshots work without a remote.
+release:
+  github:
+    owner: muratcanozdemir
+    name: anypoint-go-client
