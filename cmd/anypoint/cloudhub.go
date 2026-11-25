@@ -18,7 +18,7 @@ import (
 // (CloudHub 1.0 and 2.0 applications) are in cloudhub_apps.go.
 
 func cloudhubCmd() *Cmd {
-	return group("cloudhub", "CloudHub 1.0 networking, regions and runtimes",
+	return group("cloudhub", "CloudHub networking (1.0 VPCs and load balancers, 2.0 private spaces), regions and runtimes",
 		group("load-balancer", "Dedicated load balancers",
 			group("allowlist", "Allowed client IP ranges",
 				leaf("add", "NAME CIDRBLOCK", "Allow a CIDR block", cmdLBAllowlist(true, false)),
@@ -45,6 +45,7 @@ func cloudhubCmd() *Cmd {
 				leaf("add", "NAME CIDRBLOCK", "Allow a CIDR block (use allowlist add)", cmdLBAllowlist(true, true)),
 				leaf("remove", "NAME CIDRBLOCK", "Remove an allowed CIDR block (use allowlist remove)", cmdLBAllowlist(false, true))),
 		),
+		privateSpaceCmd(),
 		group("region", "Regions",
 			leaf("list", "[FILE]", "List regions", cmdRegionList).alias("ls")),
 		group("runtime", "Runtimes",

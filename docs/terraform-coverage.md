@@ -10,22 +10,30 @@ This compares endpoints, not request fields: a covered resource can still differ
 
 The provider has 101 resources and 120 data sources. 72 of each are typed wrappers, one per policy type
 (`anypoint_api_policy_<type>`), over the one API Manager policy endpoint, which the library covers
-generically (`ApplyPolicy` takes the configuration as JSON). The remaining 29 resources and 48 data
+generically (`ApplyAPIPolicy` takes the configuration as JSON). The remaining 29 resources and 48 data
 sources:
 
 | | resources | data sources |
 |---|---|---|
-| covered | 18 | 32 |
-| partial | 5 | 7 |
-| missing | 6 | 9 |
+| covered | 26 | 41 |
+| partial | 3 | 6 |
+| missing | 0 | 1 |
 
 ## Covered
 
 Organizations, environments, teams (members, roles), role groups (roles, users), users, available roles and
 scopes, connected apps and their scopes, Exchange assets (pages, tags, custom fields, external instances,
 search), API instances, SLA tiers, policies, upstreams, managed and self-managed (Flex) gateways, secret
-groups with their keystores, truststores, certificates, certificate pinsets and shared secrets, and Secrets
-Manager TLS contexts.
+groups with their keystores, truststores, certificates, certificate pinsets, shared secrets and TLS contexts,
+and CloudHub 2.0 private spaces: the space, its network, firewall rules and ingress (advanced) settings,
+environment associations, upgrades, transit gateways, VPN connections and TLS contexts (`anypoint/privatespaces.go`,
+`anypoint cloudhub private-space ...`).
+
+Where the provider found the private-space API to behave differently from its description, the library
+does what it does: transit gateways are renamed through the organization-scoped PATCH, routes are set by
+patching the attachment with its name, and deleting one also de-registers it organization-wide (detaching
+alone leaves the AWS resource share bound); creating a transit gateway or TLS context returns no body, so the
+new item is found by name; an empty upgrade status means none is scheduled.
 
 The self-managed gateway resource uses `/standalone/api/v1` (its registration-facade base is declared but
 unused), as the library does.
@@ -35,18 +43,11 @@ unused), as the library does.
 | provider | what is missing |
 |---|---|
 | `anypoint_agent_instance`, `anypoint_mcp_server`, `anypoint_mcp_bridge` (resources and data sources) | typed agent/MCP payloads; the endpoints (API Manager instances, Exchange assets) are reachable through the generic functions. Planned for a later release. |
-| `anypoint_tls_context`, `anypoint_secret_group_tls_context(s)` | TLS contexts of a CloudHub 2 private space (`/runtimefabric/.../privatespaces/{id}/tlsContexts`) |
 
 ## Missing
 
 | provider | API |
 |---|---|
-| `anypoint_private_space_config`, `anypoint_private_spaces` | `/runtimefabric/api/organizations/{org}/privatespaces[/{id}]` (also firewall rules and private network settings, which the provider sets through the private space) |
-| `anypoint_privatespace_advanced_config` | same, advanced settings |
-| `anypoint_private_space_association(s)` | `.../privatespaces/{id}/associations` |
-| `anypoint_private_space_upgrade` | `.../privatespaces/{id}/upgrade`, `.../upgradestatus` |
-| `anypoint_transit_gateway_connection(s)` | `.../privatespaces/{id}/transitgateways`, `.../transitgateways/{id}` |
-| `anypoint_vpn_connection` | `.../privatespaces/{id}/connections[/{id}/vpns/{id}]` |
 | `anypoint_mcp_tools` | none: the provider parses an Exchange asset's OpenAPI or RAML spec into MCP tools. Planned with MCP. |
 
-anypoint-cli-v4 has no private-space commands, which is why these were not covered by the CLI work.
+anypoint-cli-v4 has no private-space commands; the `cloudhub private-space` commands follow the provider's resources.

@@ -81,7 +81,7 @@ anypoint exchange ...       # assets, portals, pages, resources
 anypoint secrets-mgr ...    # secret groups, shared secrets, keystores, truststores, TLS contexts
 anypoint api-mgr ...        # API instances, policies, tiers, contracts, alerts, upstreams
 anypoint runtime-mgr ...    # CloudHub 1.0/2.0, Runtime Fabric and hybrid apps, servers, alerts, managed Flex Gateways
-anypoint cloudhub ...       # CloudHub 1.0 VPCs, load balancers, regions, runtimes
+anypoint cloudhub ...       # CloudHub 1.0 VPCs and load balancers, 2.0 private spaces, regions, runtimes
 anypoint designcenter ...   # API Designer projects
 anypoint datagraph ...      # DataGraph load balancer setting
 anypoint governance ...     # profiles, API and ruleset validation, ruleset authoring
@@ -124,6 +124,7 @@ anypoint runtime-mgr:application:logs <app-id> <spec-id>
 # CloudHub 1.0
 anypoint runtime-mgr:cloudhub-application:deploy hello-api target/hello-api.jar --runtime 4.6.0 --workers 2
 anypoint cloudhub:vpc:firewall-rules:add main 10.0.0.0/8 tcp 8081 8082
+anypoint cloudhub private-space tls-context create prod-space api --certificate api.crt --key api.key
 
 # Manage an API with a policy
 anypoint api-mgr:api:manage hello-api 1.0.0 --isFlex
