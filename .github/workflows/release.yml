@@ -9,6 +9,9 @@ name: Release
 #   anypoint_X.Y.Z_OS_ARCH.<ext>.provenance.sigstore.json  SLSA build provenance (Sigstore bundle)
 #   anypoint_X.Y.Z_OS_ARCH.<ext>.sbom.sigstore.json        SBOM attestation (Sigstore bundle)
 # and SHA256SUMS over the archives and SBOMs.
+# Each platform is built, archived and attested in its own job, and its files
+# are handed to the publish job as an artifact of that platform alone, deleted
+# once the release is published: the release assets are the only download.
 # If the release already exists (e.g. created by release-please or in the
 # GitHub UI), the assets are attached to it; existing assets are never replaced.
 # Every attestation is verified with `gh attestation verify` before publishing.
@@ -39,14 +42,15 @@ env:
   GORELEASER_VERSION: v2.20.3
 
 jobs:
-  # Tests and scans the tagged commit, then builds every platform with GoReleaser.
-  build:
+  # Tests and scans the tagged commit once, and lists the platforms to build
+  # from .goreleaser.yaml.
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: read
     outputs:
-      archives: ${{ steps.archives.outputs.json }}
+      targets: ${{ steps.targets.outputs.json }}
     steps:
       - name: Check tag
         run: |
@@ -58,7 +62,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.TAG }}
-          fetch-depth: 0 # GoReleaser reads the tag and commit date from git
           persist-credentials: false
 
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
@@ -77,44 +80,21 @@ jobs:
         # fails the release on a known vulnerability reachable from the code
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
 
-      - name: Install syft (GoReleaser's SBOM generator)
-        uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
-
-      - name: Build, archive, SBOM, checksum
-        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-        with:
-          distribution: goreleaser
-          version: ${{ env.GORELEASER_VERSION }}
-          # publishing happens after attestation, in the publish job
-          args: release --clean --skip=publish
-
-      - name: Check the runner's own binary
-        run: dist/anypoint_linux_amd64_v1/anypoint version | grep -F "anypoint ${TAG#v} "
-
-      - id: archives
-        name: Archives to attest
+      - id: targets
+        name: Platforms (goos x goarch of the build in .goreleaser.yaml)
         run: |
-          json=$(jq -c '[.[] | select(.type == "Archive")
-                         | {archive: .name, base: (.name | sub("\\.(tar\\.gz|zip)$"; ""))}]' dist/artifacts.json)
+          json=$(yq -o=json '.builds' .goreleaser.yaml |
+                 jq -c 'if length != 1 then error("expected one build") else . end
+                        | [.[0] | .goos[] as $os | .goarch[] as $arch | {goos: $os, goarch: $arch}]')
           echo "json=$json" >> "$GITHUB_OUTPUT"
           echo "$json" | jq .
 
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: dist
-          path: |
-            dist/*.tar.gz
-            dist/*.zip
-            dist/*.cdx.json
-            dist/SHA256SUMS
-          if-no-files-found: error
-          retention-days: 1 # job hand-off only; deleted once published
-
-  # One job per archive: SLSA provenance and SBOM attestations, verified.
-  attest:
-    needs: build
+  # One job per platform: build, archive and SBOM with GoReleaser for that
+  # target only, then SLSA provenance and SBOM attestations, verified.
+  platform:
+    needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       contents: read
       id-token: write     # Sigstore signing certificate for the attestations
@@ -123,43 +103,83 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        include: ${{ fromJSON(needs.build.outputs.archives) }}
-    name: attest ${{ matrix.base }}
+        include: ${{ fromJSON(needs.verify.outputs.targets) }}
+    name: ${{ matrix.goos }}_${{ matrix.goarch }}
     env:
-      ARCHIVE: dist/${{ matrix.archive }}
-      SBOM: dist/${{ matrix.base }}.cdx.json
+      # not GOOS/GOARCH: those would retarget every go command GoReleaser runs
+      TARGET_OS: ${{ matrix.goos }}
+      TARGET_ARCH: ${{ matrix.goarch }}
     steps:
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          name: dist
-          path: dist
+          ref: ${{ env.TAG }}
+          fetch-depth: 0 # GoReleaser reads the tag and commit date from git
+          persist-credentials: false
 
-      - name: Check against SHA256SUMS
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+
+      - name: Install syft (GoReleaser's SBOM generator)
+        uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+
+      - name: GoReleaser configuration for this platform only
+        # outside the checkout: GoReleaser refuses a dirty working tree
         run: |
-          cd dist && sha256sum --ignore-missing -c SHA256SUMS | grep -F "${{ matrix.archive }}: OK"
+          yq '.builds[0].goos = [strenv(TARGET_OS)] | .builds[0].goarch = [strenv(TARGET_ARCH)]' \
+            .goreleaser.yaml > "$RUNNER_TEMP/goreleaser.yaml"
+
+      - name: Build, archive, SBOM
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+        with:
+          distribution: goreleaser
+          version: ${{ env.GORELEASER_VERSION }}
+          # publishing happens after attestation, in the publish job
+          args: release --clean --skip=publish --config ${{ runner.temp }}/goreleaser.yaml
+
+      - id: files
+        name: This platform's archive and SBOM
+        run: |
+          archive=$(jq -r '[.[] | select(.type == "Archive")] | if length != 1 then error("expected one archive") else .[0].name end' dist/artifacts.json)
+          base=${archive%.tar.gz}; base=${base%.zip}
+          case "$base" in
+            "anypoint_${TAG#v}_${TARGET_OS}_${TARGET_ARCH}") ;;
+            *) echo "::error::unexpected archive $archive for $TARGET_OS/$TARGET_ARCH"; exit 1 ;;
+          esac
+          test -f "dist/$base.cdx.json"
+          { echo "archive=$archive"; echo "base=$base"; } >> "$GITHUB_OUTPUT"
+
+      - name: Check the runner's own binary
+        if: matrix.goos == 'linux' && matrix.goarch == 'amd64'
+        run: dist/anypoint_linux_amd64_v1/anypoint version | grep -F "anypoint ${TAG#v} "
 
       - name: Attest build provenance
         id: provenance
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-path: ${{ env.ARCHIVE }}
+          subject-path: dist/${{ steps.files.outputs.archive }}
 
       - name: Attest SBOM
         id: sbom
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
-          subject-path: ${{ env.ARCHIVE }}
-          sbom-path: ${{ env.SBOM }}
+          subject-path: dist/${{ steps.files.outputs.archive }}
+          sbom-path: dist/${{ steps.files.outputs.base }}.cdx.json
 
       - name: Verify attestations
         env:
           GH_TOKEN: ${{ github.token }}
+          ARCHIVE: ${{ steps.files.outputs.archive }}
+          BASE: ${{ steps.files.outputs.base }}
           PROVENANCE_BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
           SBOM_BUNDLE: ${{ steps.sbom.outputs.bundle-path }}
         run: |
-          mkdir -p bundles
-          cp "$PROVENANCE_BUNDLE" "bundles/${{ matrix.archive }}.provenance.sigstore.json"
-          cp "$SBOM_BUNDLE" "bundles/${{ matrix.archive }}.sbom.sigstore.json"
+          out=$RUNNER_TEMP/out; mkdir -p "$out"
+          cp "dist/$ARCHIVE" "dist/$BASE.cdx.json" "$out/"
+          cp "$PROVENANCE_BUNDLE" "$out/$ARCHIVE.provenance.sigstore.json"
+          cp "$SBOM_BUNDLE" "$out/$ARCHIVE.sbom.sigstore.json"
           # signed by this workflow, from this ref and commit, on a GitHub-hosted
           # runner; checked against the attestations API and the published bundles
           common=(--repo "$GITHUB_REPOSITORY"
@@ -168,21 +188,23 @@ jobs:
                   --source-digest "$GITHUB_SHA"
                   --deny-self-hosted-runners)
           verify() { # predicate type, published bundle
-            gh attestation verify "$ARCHIVE" "${common[@]}" --predicate-type "$1"
-            gh attestation verify "$ARCHIVE" "${common[@]}" --predicate-type "$1" --bundle "$2"
+            gh attestation verify "$out/$ARCHIVE" "${common[@]}" --predicate-type "$1"
+            gh attestation verify "$out/$ARCHIVE" "${common[@]}" --predicate-type "$1" --bundle "$2"
           }
-          verify https://slsa.dev/provenance/v1 "bundles/${{ matrix.archive }}.provenance.sigstore.json"
-          verify https://cyclonedx.org/bom "bundles/${{ matrix.archive }}.sbom.sigstore.json"
+          verify https://slsa.dev/provenance/v1 "$out/$ARCHIVE.provenance.sigstore.json"
+          verify https://cyclonedx.org/bom "$out/$ARCHIVE.sbom.sigstore.json"
+          ls -l "$out"
 
+      # This platform's files only, for the publish job; deleted once published.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: bundles-${{ matrix.base }}
-          path: bundles/*
+          name: ${{ steps.files.outputs.base }}
+          path: ${{ runner.temp }}/out/*
           if-no-files-found: error
-          retention-days: 1 # job hand-off only; deleted once published
+          retention-days: 1
 
   publish:
-    needs: attest
+    needs: platform
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -196,14 +218,15 @@ jobs:
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: dist
-          path: dist
-
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          pattern: bundles-*
+          pattern: anypoint_*
           merge-multiple: true
           path: dist
+
+      - name: SHA256SUMS
+        run: |
+          cd dist
+          sha256sum -- *.tar.gz *.zip *.cdx.json > SHA256SUMS
+          cat SHA256SUMS
 
       - name: Publish release
         # Attaches the assets to an existing release (release-please, GitHub UI),
@@ -226,14 +249,13 @@ jobs:
           fi
 
       - name: Delete hand-off artifacts
-        # dist and bundles-* only carry files between the jobs of this run; the
-        # release assets are the distribution. Left on the run page they would be
-        # a second, unattested download of every platform at once.
+        # The per-platform artifacts only carry files from the platform jobs to
+        # this one; the release assets are the distribution.
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
-              --jq '.artifacts[] | select(.name == "dist" or (.name | startswith("bundles-"))) | "\(.id) \(.name)"' |
+              --jq '.artifacts[] | select(.name | startswith("anypoint_")) | "\(.id) \(.name)"' |
             while read -r id name; do
               echo "deleting $name"
               gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$id"
