@@ -322,31 +322,29 @@ func isRTF(dt string) bool      { return dt == "rtf" || dt == "RF" }
 func isHybrid(dt string) bool   { return dt == "hybrid" || dt == "HY" }
 func isCH2(dt string) bool      { return dt == "cloudhub2" || dt == "CH2" }
 
-func ptr[T any](v T) *T { return &v }
-
 // prepare normalizes the options as anypoint-cli-v4's prepareOptions.
 func (o *apiOpts) prepare(convertType bool) {
 	if o.DeploymentType == nil && is(o.IsFlex) {
-		o.DeploymentType = ptr("hybrid")
+		o.DeploymentType = new("hybrid")
 	}
 	if o.DeploymentType == nil {
-		o.DeploymentType = ptr("cloudhub")
+		o.DeploymentType = new("cloudhub")
 	}
-	o.IsCloudHub = ptr(isCloudHub(*o.DeploymentType))
+	o.IsCloudHub = new(isCloudHub(*o.DeploymentType))
 	if convertType && o.Type != nil {
 		switch *o.Type {
 		case "raml":
 			if is(o.WithProxy) {
-				o.Type = ptr("rest-api")
+				o.Type = new("rest-api")
 			}
 		case "http":
-			o.Type = ptr("http-api")
+			o.Type = new("http-api")
 		case "wsdl":
-			o.Type = ptr("soap-api")
+			o.Type = new("soap-api")
 		}
 	}
 	if short, ok := map[string]string{"cloudhub": "CH", "hybrid": "HY", "rtf": "RF", "cloudhub2": "CH2"}[*o.DeploymentType]; ok {
-		o.DeploymentType = ptr(short)
+		o.DeploymentType = new(short)
 	}
 	if !is(o.WithProxy) {
 		o.IsCloudHub, o.RefUserDomain = nil, nil
@@ -355,14 +353,14 @@ func (o *apiOpts) prepare(convertType bool) {
 		o.RefUserDomain = nil
 	}
 	if is(o.RefUserDomain) {
-		o.Port, o.IsCloudHub = nil, ptr(false)
+		o.Port, o.IsCloudHub = nil, new(false)
 	}
 	if isRTF(*o.DeploymentType) {
 		switch sv(o.Scheme) {
 		case "http":
-			o.Port = ptr("8081")
+			o.Port = new("8081")
 		case "https":
-			o.Port = ptr("8082")
+			o.Port = new("8082")
 		}
 	}
 }
@@ -533,10 +531,10 @@ func (o *apiOpts) fillFrom(a *anypoint.APIInstance) error {
 		o.Mule4 = e.MuleVersion4OrAbove
 	}
 	if o.DeploymentType == nil && e.DeploymentType != "" {
-		o.DeploymentType = ptr(e.DeploymentType)
+		o.DeploymentType = new(e.DeploymentType)
 	}
 	if o.Type == nil && e.Type != "" {
-		o.Type = ptr(e.Type)
+		o.Type = new(e.Type)
 	}
 	if o.URI == nil {
 		o.URI = e.URI
@@ -545,36 +543,36 @@ func (o *apiOpts) fillFrom(a *anypoint.APIInstance) error {
 		o.ResponseTimeout = e.ResponseTimeout
 	}
 	if o.WithProxy == nil {
-		o.WithProxy = ptr(e.ProxyURI != nil)
+		o.WithProxy = new(e.ProxyURI != nil)
 	}
 	if o.Label == nil {
-		o.Label = ptr(a.InstanceLabel)
+		o.Label = new(a.InstanceLabel)
 	}
 	if w := e.WSDLConfig; w != nil {
 		if o.ServiceName == nil && w.Name != "" {
-			o.ServiceName = ptr(w.Name)
+			o.ServiceName = new(w.Name)
 		}
 		if o.ServiceNamespace == nil && w.Namespace != "" {
-			o.ServiceNamespace = ptr(w.Namespace)
+			o.ServiceNamespace = new(w.Namespace)
 		}
 		if o.ServicePort == nil && w.Port != "" {
-			o.ServicePort = ptr(w.Port)
+			o.ServicePort = new(w.Port)
 		}
 	}
 	if e.ProxyURI != nil {
 		if u, err := url.Parse(*e.ProxyURI); err == nil {
 			if o.Scheme == nil && u.Scheme != "" {
-				o.Scheme = ptr(u.Scheme)
+				o.Scheme = new(u.Scheme)
 			}
 			if o.Port == nil && u.Port() != "" {
-				o.Port = ptr(u.Port())
+				o.Port = new(u.Port())
 			}
 			if o.Path == nil {
 				p := u.Path
 				if u.RawQuery != "" {
 					p += "?" + u.RawQuery
 				}
-				o.Path = ptr(p)
+				o.Path = new(p)
 			}
 		}
 	}
