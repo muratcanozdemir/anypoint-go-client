@@ -4,7 +4,7 @@ BIN       := anypoint
 PKG       := ./cmd/anypoint
 VERSION   ?= $(shell git describe --tags --always --dirty 2>/dev/null | sed 's/^v//' || echo dev)
 LDFLAGS   := -s -w -X main.version=$(VERSION)
-# Keep in sync with GORELEASER_VERSION in .github/workflows/release.yml and ci.yml.
+# Keep in sync with GORELEASER_VERSION in .github/workflows/release.yml.
 GORELEASER := go run github.com/goreleaser/goreleaser/v2@v2.20.3
 
 help: ## List targets
