@@ -70,8 +70,11 @@ jobs:
           go-version-file: go.mod
       - run: go test ./...
 
-  # The release configuration is valid and every platform in it still builds
-  # and packages; nothing is published and the archives are not kept.
+  # The release configuration is valid (every run, seconds). The full snapshot
+  # build, every platform built and packaged with nothing published or kept,
+  # runs only where it can catch something: the release-please pull request
+  # (the last gate before a tag), changes to the release or build configuration
+  # or the module graph, OS/arch-specific source files, and manual runs.
   goreleaser:
     runs-on: ubuntu-latest
     steps:
@@ -87,7 +90,25 @@ jobs:
           distribution: goreleaser
           version: v2.20.3 # keep in sync with release.yml and the Makefile
           args: check
-      - uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+      - id: scope
+        name: Snapshot build needed?
+        env:
+          EVENT: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          snapshot=false
+          if [[ "$EVENT" == workflow_dispatch || "$HEAD_REF" == release-please--* ]]; then
+            snapshot=true
+          elif ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            snapshot=true # no usable base (new branch, force push): build to be safe
+          elif git diff --name-only "$BASE_SHA" HEAD | tee /dev/stderr | grep -qE \
+              '^(\.goreleaser\.yaml|go\.mod|go\.sum|\.github/workflows/(ci|release|release-please)\.yml)$|_(windows|darwin|linux|freebsd|netbsd|openbsd|unix|amd64|arm64|arm|386)(_test)?\.go$'; then
+            snapshot=true
+          fi
+          echo "snapshot=$snapshot" | tee -a "$GITHUB_OUTPUT"
+      - if: steps.scope.outputs.snapshot == 'true'
+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         with:
           distribution: goreleaser
           version: v2.20.3
