@@ -108,7 +108,7 @@ jobs:
             dist/*.cdx.json
             dist/SHA256SUMS
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1 # job hand-off only; deleted once published
 
   # One job per archive: SLSA provenance and SBOM attestations, verified.
   attest:
@@ -179,7 +179,7 @@ jobs:
           name: bundles-${{ matrix.base }}
           path: bundles/*
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1 # job hand-off only; deleted once published
 
   publish:
     needs: attest
@@ -187,6 +187,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write     # create the release / upload assets
+      actions: write      # delete this run's hand-off artifacts afterwards
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -223,3 +224,17 @@ jobs:
             gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag "${notes[@]}" \
               --title "$TAG" "${prerelease[@]}"
           fi
+
+      - name: Delete hand-off artifacts
+        # dist and bundles-* only carry files between the jobs of this run; the
+        # release assets are the distribution. Left on the run page they would be
+        # a second, unattested download of every platform at once.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
+              --jq '.artifacts[] | select(.name == "dist" or (.name | startswith("bundles-"))) | "\(.id) \(.name)"' |
+            while read -r id name; do
+              echo "deleting $name"
+              gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$id"
+            done

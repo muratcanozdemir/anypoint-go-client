@@ -43,6 +43,7 @@ jobs:
       id-token: write
       attestations: write
       artifact-metadata: write
+      actions: write
     uses: ./.github/workflows/release.yml
     with:
       tag: ${{ needs.release-please.outputs.tag_name }}
