@@ -64,6 +64,7 @@ func TestDXMuleJars(t *testing.T) {
 	r := newRecorder(t)
 	home := t.TempDir()
 	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	dp := fakeNPMPackage(t, r, "@salesforce/anypoint-cli-dx-mule-plugin", "9.9.9", map[string]string{
 		"jars/mule-dx-tooling-cli.jar":                                      "tooling",
 		"jars/flow-design-service/mule-dx-flow-design-service-impl-1.0.jar": "design",

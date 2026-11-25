@@ -180,12 +180,14 @@ func extractTarGz(path, dir string) ([]string, error) {
 		case tar.TypeSymlink:
 			// keep links that stay inside the archive (JDKs and runtimes use them)
 			target := filepath.Join(filepath.Dir(dst), h.Linkname) //nolint:gosec // checked to stay under dir just below
-			if filepath.IsAbs(h.Linkname) || !strings.HasPrefix(target, filepath.Clean(dir)+string(filepath.Separator)) {
+			// tar link names use '/', so "/etc/passwd" is absolute even where filepath.IsAbs says not (Windows)
+			if filepath.IsAbs(h.Linkname) || strings.HasPrefix(strings.ReplaceAll(h.Linkname, `\`, "/"), "/") ||
+				filepath.VolumeName(h.Linkname) != "" || !strings.HasPrefix(target, filepath.Clean(dir)+string(filepath.Separator)) {
 				return nil, fmt.Errorf("unsafe link %q -> %q", h.Name, h.Linkname)
 			}
 			if err = os.MkdirAll(filepath.Dir(dst), 0o750); err == nil {
 				_ = os.Remove(dst)
-				err = os.Symlink(h.Linkname, dst)
+				err = os.Symlink(filepath.FromSlash(h.Linkname), dst)
 			}
 		}
 		if err != nil {

@@ -38,6 +38,7 @@ func TestDXMuleRuntimes(t *testing.T) {
 	r := newRecorder(t)
 	home := t.TempDir()
 	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home) // os.UserHomeDir on Windows
 	r.on("GET /muledx/api/runtime/all", map[string]any{"supportedRuntimeVersions": []any{
 		map[string]any{"version": "4.9.0"},
 		map[string]any{"version": "4.10.0", "latest": true, "compatibleJDKs": []any{map[string]any{"version": "17.0.12_7", "latest": true}}}}})
