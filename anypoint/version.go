@@ -4,4 +4,4 @@ package anypoint
 //
 // It lives in its own file so that release pull requests, which only bump this
 // line, stay trivially reviewable.
-const Version = "0.0.0" // x-release-please-version
+const Version = "0.1.0" // x-release-please-version
