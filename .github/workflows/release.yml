@@ -4,10 +4,10 @@ name: Release
 # CLI at that version with GoReleaser (.goreleaser.yaml: platforms, archives,
 # SBOMs, checksums) and publishes a GitHub release with, per platform
 # (OS_ARCH, e.g. linux_arm64):
-#   anypoint_X.Y.Z_OS_ARCH.tar.gz (.zip on Windows)        binary, LICENSE, README, CHANGELOG
-#   anypoint_X.Y.Z_OS_ARCH.cdx.json                        CycloneDX SBOM of the binary
-#   anypoint_X.Y.Z_OS_ARCH.<ext>.provenance.sigstore.json  SLSA build provenance (Sigstore bundle)
-#   anypoint_X.Y.Z_OS_ARCH.<ext>.sbom.sigstore.json        SBOM attestation (Sigstore bundle)
+#   anypoint_OS_ARCH.tar.gz (.zip on Windows)        binary, LICENSE, README, CHANGELOG
+#   anypoint_OS_ARCH.cdx.json                        CycloneDX SBOM of the binary
+#   anypoint_OS_ARCH.<ext>.provenance.sigstore.json  SLSA build provenance (Sigstore bundle)
+#   anypoint_OS_ARCH.<ext>.sbom.sigstore.json        SBOM attestation (Sigstore bundle)
 # and SHA256SUMS over the archives and SBOMs.
 # If the release already exists (e.g. created by release-please or in the
 # GitHub UI), the assets are attached to it; existing assets are never replaced.

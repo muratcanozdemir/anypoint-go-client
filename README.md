@@ -9,14 +9,36 @@ The auth flows and org resolution follow the official
 
 ## Install
 
-Download the archive for your platform from the
-[releases page](https://github.com/muratcanozdemir/anypoint-go-client/releases):
-Linux, macOS and Windows, each for amd64 and arm64.
-Check the archive against `SHA256SUMS`, and optionally its build provenance:
+Download the latest release for your platform:
+
+| OS | amd64 (x86-64) | arm64 |
+| --- | --- | --- |
+| Linux | [anypoint_linux_amd64.tar.gz](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_linux_amd64.tar.gz) | [anypoint_linux_arm64.tar.gz](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_linux_arm64.tar.gz) |
+| macOS | [anypoint_darwin_amd64.tar.gz](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_darwin_amd64.tar.gz) (Intel) | [anypoint_darwin_arm64.tar.gz](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_darwin_arm64.tar.gz) (Apple silicon) |
+| Windows | [anypoint_windows_amd64.zip](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_windows_amd64.zip) | [anypoint_windows_arm64.zip](https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_windows_arm64.zip) |
+
+Or from a terminal, for the machine you are on (Linux, macOS):
+
+```sh
+os=$(uname -s | tr A-Z a-z); arch=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+curl -fsSL "https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_${os}_${arch}.tar.gz" |
+  sudo tar xz --strip-components=1 --exclude '*.md' --exclude LICENSE -C /usr/local/bin
+```
+
+Windows (PowerShell):
+
+```powershell
+$arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'amd64' }
+Invoke-WebRequest "https://github.com/muratcanozdemir/anypoint-go-client/releases/latest/download/anypoint_windows_$arch.zip" -OutFile anypoint.zip
+Expand-Archive anypoint.zip .   # anypoint_<version>_windows_<arch>\anypoint.exe
+```
+
+A specific version is at `releases/download/vX.Y.Z/<file>`. To check a download against
+`SHA256SUMS`, and optionally its build provenance:
 
 ```sh
 sha256sum --ignore-missing -c SHA256SUMS
-gh attestation verify anypoint_*_linux_amd64.tar.gz --repo muratcanozdemir/anypoint-go-client
+gh attestation verify anypoint_linux_amd64.tar.gz --repo muratcanozdemir/anypoint-go-client
 ```
 
 Or build from source:

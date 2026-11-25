@@ -28,8 +28,10 @@ builds:
 archives:
   - id: anypoint
     ids: [anypoint]
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    wrap_in_directory: true
+    # No version in the name: releases/latest/download/anypoint_<os>_<arch>.<ext>
+    # is then a stable direct link to the newest build for each platform.
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     # reproducible archives: fixed owner and mtime for every entry
     builds_info: &fileinfo
       owner: root
@@ -52,7 +54,7 @@ sboms:
   - id: binaries
     artifacts: binary
     documents:
-      - "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.cdx.json"
+      - "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}.cdx.json"
     args: ["$artifact", "--output", "cyclonedx-json=$document"]
 
 checksum:
