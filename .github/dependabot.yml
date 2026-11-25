@@ -8,3 +8,9 @@ updates:
   - package-ecosystem: gomod
     directory: /
     schedule: { interval: weekly }
+    # The AMF custom validator (amf-custom-validator) pins OPA v0.47.0 and every
+    # release so far does the same, so a major OPA bump cannot be used by the
+    # client yet. Lift this rule together with a validator release that supports OPA 1.x.
+    ignore:
+      - dependency-name: "github.com/open-policy-agent/opa"
+        update-types: ["version-update:semver-major"]
