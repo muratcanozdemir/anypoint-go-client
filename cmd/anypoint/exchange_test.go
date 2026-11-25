@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -125,6 +126,10 @@ func TestExchangeUpload(t *testing.T) {
 	if err := os.WriteFile(pom, []byte("<project/>"), 0o600); err != nil {
 		t.Fatal(err)
 	}
+	files, err := json.Marshal(map[string]string{"raml.zip": spec, "pom.xml": pom}) // escapes Windows backslashes
+	if err != nil {
+		t.Fatal(err)
+	}
 	r.on("POST "+orgAsset, map[string]any{"publicationStatusLink": r.srv.URL + "/exchange/api/v2/organizations/" + rootOrg + "/assets/status/1"})
 	polls := 0
 	r.on("GET /exchange/api/v2/organizations/"+rootOrg+"/assets/status/1", func(*http.Request) reply {
@@ -136,7 +141,7 @@ func TestExchangeUpload(t *testing.T) {
 	})
 	out := r.mustRun("exchange:asset:upload", "my-api/1.0.0", "--name", "My API", "--type", "rest-api", "--status", "development",
 		"--tags", "t1,t2", "--properties", `{"mainFile":"api.raml","apiVersion":"v1"}`, "--categories", `{"Department":["IT","Ops"]}`,
-		"--fields", `{"owner":"me"}`, "--files", `{"raml.zip":"`+spec+`","pom.xml":"`+pom+`"}`, "--headers", `{"x-user-id":"u1"}`)
+		"--fields", `{"owner":"me"}`, "--files", string(files), "--headers", `{"x-user-id":"u1"}`)
 	if !strings.Contains(out, "Publishing completed") || polls != 2 {
 		t.Errorf("upload must wait for the publication (polls %d):\n%s", polls, out)
 	}
